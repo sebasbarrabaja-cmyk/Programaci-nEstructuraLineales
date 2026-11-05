@@ -2,8 +2,6 @@
 #include "furgoneta.hpp"
 
 #include <cassert>
-#include <cstdlib>
-
 
 Furgoneta::Furgoneta()
     : capacidad_(0), peso_(0), carga_()
@@ -12,66 +10,68 @@ Furgoneta::Furgoneta()
 
 double Furgoneta::capacidad() const
 {
-    assert(false && "sin implementar");
-    std::abort();
+    return capacidad_;
 }
 
 double Furgoneta::peso() const
 {
-    assert(false && "sin implementar");
-    std::abort();
+    return peso_;
 }
 
-void Furgoneta::fijarCapacidad(double)
+void Furgoneta::fijarCapacidad(double kilos)
 {
-    assert(false && "sin implementar");
-    std::abort();
+    assert(kilos > 0);
+    assert(vacia());  // con carga a bordo el peso podría superar la nueva capacidad
+    capacidad_ = kilos;
 }
 
-bool Furgoneta::cabe(double) const
+bool Furgoneta::cabe(double kilos) const
 {
-    assert(false && "sin implementar");
-    std::abort();
+    return peso_ + kilos <= capacidad_ + 1e-9;
 }
 
-void Furgoneta::cargar(const Paquete&)
+void Furgoneta::cargar(const Paquete& p)
 {
-    assert(false && "sin implementar");
-    std::abort();
+    assert(cabe(p.kilos()));
+    carga_.apilar(p);
+    peso_ += p.kilos();
 }
 
 bool Furgoneta::vacia() const
 {
-    assert(false && "sin implementar");
-    std::abort();
+    return carga_.vacia();
 }
 
 int Furgoneta::numPaquetes() const
 {
-    assert(false && "sin implementar");
-    std::abort();
+    return carga_.tamano();
 }
 
 const Paquete& Furgoneta::siguiente() const
 {
-    assert(false && "sin implementar");
-    std::abort();
+    assert(!vacia());
+    return carga_.cima();
 }
 
 Paquete Furgoneta::descargar()
 {
-    assert(false && "sin implementar");
-    std::abort();
+    assert(!vacia());
+    Paquete p = carga_.desapilar();
+    peso_ -= p.kilos();
+    if (carga_.vacia()) {
+        peso_ = 0;  // el redondeo no se acumula entre cargas
+    }
+    return p;
 }
 
-bool Furgoneta::contiene(const std::string&) const
+bool Furgoneta::contiene(const std::string& id) const
 {
-    assert(false && "sin implementar");
-    std::abort();
+    return carga_.contiene(id);
 }
 
 void Furgoneta::imprimir() const
 {
-    assert(false && "sin implementar");
-    std::abort();
+    std::cout << "Furgoneta " << peso_ << "/" << capacidad_ << " kg, "
+              << carga_.tamano() << " paquetes (el primero en entregarse, arriba):\n";
+    carga_.imprimir();
 }
